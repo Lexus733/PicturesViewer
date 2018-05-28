@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Pictures Viewer</string>
+    <string name="sortByDate">Sort by date</string>
+    <string name="sortBySize">Sort by size</string>
 </resources>

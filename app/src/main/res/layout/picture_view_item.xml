@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/picture_item"
         android:scaleType="fitXY"
-        android:layout_width="120dp"
-        android:layout_height="120dp"/>
+        android:layout_width="@dimen/recyclerViewer_size"
+        android:layout_height="@dimen/recyclerViewer_size"/>
 
 </LinearLayout>

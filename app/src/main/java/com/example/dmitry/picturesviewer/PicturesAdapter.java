@@ -44,7 +44,7 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull PicturesAdapter.ViewHolder holder, final int position) {
         final Image image = images.get(position);
-        holder.imageView.setImageResource(image.getImage());
+        holder.imageView.setImageBitmap(image.getImage());
         holder.bind(image,listener,listenerLong);
     }
 

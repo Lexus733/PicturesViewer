@@ -1,10 +1,15 @@
 package com.example.dmitry.picturesviewer;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,8 +21,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GeneralActivity extends AppCompatActivity {
@@ -33,7 +43,9 @@ public class GeneralActivity extends AppCompatActivity {
     private PicturesAdapter picturesAdapter;
     private PicturesAdapter.OnItemClickListener listener;
     private PicturesAdapter.OnItemLongClickListener listenerLong;
+    private PicturesAdapter.OnItemClickListener listenerDelete;
     private List<Image> images;
+    private DeleteDialogFragment deleteDialogFragment;
 
 
     @Override
@@ -64,37 +76,44 @@ public class GeneralActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_general);
 
-        images = new ArrayList<>();
+        getAllFiles();
 
-        setInitialData();
+        fab = (FloatingActionButton) findViewById(R.id.fabBtn_camera);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerListView);
+
+
 
         listener = new PicturesAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(Image item) {
-                Toast.makeText(getApplicationContext(),"Test Normal Click " + item.toString(),Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getApplicationContext(),PicturesView.class);
+                i.putExtra("path",item.getPath());
+                startActivity(i);
             }
         };
+
         listenerLong = new PicturesAdapter.OnItemLongClickListener() {
             @Override
             public boolean OnItemLongClick(Image item) {
-                Toast.makeText(getApplicationContext(),"Image was deleted:  " + item.toString(),Toast.LENGTH_SHORT).show();
-                images.remove(item);
-                picturesAdapter.notifyDataSetChanged();
+
+                deleteDialogFragment = new DeleteDialogFragment();
+
+                Bundle args = new Bundle();
+                args.putString("path",item.getPath());
+                deleteDialogFragment.setArguments(args);
+                deleteDialogFragment.show(getFragmentManager(),"custom");
+
+                        images.remove(item);
+                        picturesAdapter.notifyDataSetChanged();
+
                 return true;
             }
         };
-
-        picturesAdapter = new PicturesAdapter(this,images,listener,listenerLong);
-        gridLayoutManager = new GridLayoutManager(this,3);
-
-        fab = (FloatingActionButton) findViewById(R.id.fabBtn_camera);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerListView);
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.setAdapter(picturesAdapter);
-
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,29 +124,75 @@ public class GeneralActivity extends AppCompatActivity {
                 startActivityForResult(i,REQUEST_IMAGE_CAPTURE);
             }
         });
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK){
-            if (requestCode == REQUEST_IMAGE_CAPTURE){
 
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+        picturesAdapter = new PicturesAdapter(this,images,listener,listenerLong);
+        gridLayoutManager = new GridLayoutManager(this,3);
 
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setAdapter(picturesAdapter);
     }
 
     private void getAllFiles(){
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-        Log.d("path","Path: " + path);
-        File directory = new File(path);
-        File[] files = directory.listFiles();
-        Log.d("size","Size: " + files.length);
-        for (int i = 0; i < files.length; i++){
-            Log.d("files","File:" + files[i].getName());
+
+        images = new ArrayList<>();
+
+        File file = null;
+        final int pix = getResources().getDimensionPixelSize(R.dimen.recyclerViewer_size);
+        final File directory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString());
+        final File[] files = directory.listFiles();
+
+        for (int i = 0; i < files.length; i++) {
+
+            Log.d("files", "File:" + files[i].getName());
+
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), files[i].getName());
+
+            if (!file.isDirectory() && !file.isHidden()) {
+                Bitmap bitmap = decodeSampledBitmapFromResource(file.getAbsolutePath(), pix, pix);
+                images.add(new Image(bitmap,files[i].getAbsolutePath()));
+
+            }
         }
+    }
+
+
+    public static Bitmap decodeSampledBitmapFromResource(String path, int reqWidth, int reqHeight) {
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+
+        options.inJustDecodeBounds = true;
+
+        BitmapFactory.decodeFile(path, options);
+
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        options.inJustDecodeBounds = false;
+
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+
+        return BitmapFactory.decodeFile(path, options);
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
 //    public boolean deleteFile(String path){
@@ -136,9 +201,4 @@ public class GeneralActivity extends AppCompatActivity {
 //        return deleted;
 //    }
 
-    private void setInitialData(){
-        images.add(new Image(R.drawable.android));
-        images.add(new Image(R.drawable.ic_photo_camera_black_24dp));
-        images.add(new Image(R.drawable.bigandroid));
-    }
 }

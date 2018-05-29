@@ -1,20 +1,31 @@
 package com.example.dmitry.picturesviewer;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 public class Image {
 
-    private int image;
+    private Bitmap image;
+    private String path;
 
-    public Image(int image){
-        this.image = image;
+    public String getPath() {
+        return path;
     }
 
-    public int getImage() {
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public Image(Bitmap image, String path){
+        this.image = image;
+        this.path = path;
+    }
+
+    public Bitmap getImage() {
         return image;
     }
 
-    public void setImage(int image) {
+    public void setImage(Bitmap image) {
         this.image = image;
     }
 }

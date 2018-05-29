@@ -1,15 +1,12 @@
 package com.example.dmitry.picturesviewer;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,20 +18,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class GeneralActivity extends AppCompatActivity {
+    /*
+    Есть 2 бага
+
+    1.Dialog удаляет из массива фото раньше нажатия кнопки.
+
+    2.После сохранения фото надо обновить массив либо заного его создавать.
+
+     */
 
     public static final String LOG_MENU = "menu";
-   public static final int REQUEST_IMAGE_CAPTURE = 0;
-   public static final int IMAGE_REQUEST = 1;
 
     private Uri imageUri;
     private FloatingActionButton fab;
@@ -43,7 +41,6 @@ public class GeneralActivity extends AppCompatActivity {
     private PicturesAdapter picturesAdapter;
     private PicturesAdapter.OnItemClickListener listener;
     private PicturesAdapter.OnItemLongClickListener listenerLong;
-    private PicturesAdapter.OnItemClickListener listenerDelete;
     private List<Image> images;
     private DeleteDialogFragment deleteDialogFragment;
 
@@ -87,7 +84,6 @@ public class GeneralActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerListView);
 
 
-
         listener = new PicturesAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(Image item) {
@@ -121,7 +117,7 @@ public class GeneralActivity extends AppCompatActivity {
                 Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 imageUri = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"pv_" + String.valueOf(System.currentTimeMillis()) + ".jpg"));
                 i.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
-                startActivityForResult(i,REQUEST_IMAGE_CAPTURE);
+                startActivity(i);
             }
         });
 
@@ -139,8 +135,7 @@ public class GeneralActivity extends AppCompatActivity {
 
         File file = null;
         final int pix = getResources().getDimensionPixelSize(R.dimen.recyclerViewer_size);
-        final File directory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString());
-        final File[] files = directory.listFiles();
+        final File[] files = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString()).listFiles();
 
         for (int i = 0; i < files.length; i++) {
 
@@ -151,7 +146,6 @@ public class GeneralActivity extends AppCompatActivity {
             if (!file.isDirectory() && !file.isHidden()) {
                 Bitmap bitmap = decodeSampledBitmapFromResource(file.getAbsolutePath(), pix, pix);
                 images.add(new Image(bitmap,files[i].getAbsolutePath()));
-
             }
         }
     }
@@ -194,11 +188,8 @@ public class GeneralActivity extends AppCompatActivity {
 
         return inSampleSize;
     }
+    private void showDeleteItemDialog(){
 
-//    public boolean deleteFile(String path){
-//        File file = new File(path);
-//        boolean deleted = file.delete();
-//        return deleted;
-//    }
+    }
 
 }

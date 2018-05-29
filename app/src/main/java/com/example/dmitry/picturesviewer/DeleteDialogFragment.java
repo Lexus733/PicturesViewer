@@ -17,7 +17,9 @@ public class DeleteDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
         final String path = getArguments().getString("path");
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         return builder.setTitle("Important message!!!").
                 setMessage("Do you want delete this photo?").

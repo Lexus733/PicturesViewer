@@ -2,4 +2,8 @@
     <string name="app_name">Pictures Viewer</string>
     <string name="sortByDate">Sort by date</string>
     <string name="sortBySize">Sort by size</string>
+    <string name="dialog_title">Important message!</string>
+    <string name="dialog_message">Do you want delete this photo?</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_cancel">Cancel</string>
 </resources>

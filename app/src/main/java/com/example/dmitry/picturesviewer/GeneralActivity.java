@@ -1,12 +1,12 @@
 package com.example.dmitry.picturesviewer;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,17 +20,11 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class GeneralActivity extends AppCompatActivity {
-    /*
-    Есть 2 бага
-
-    1.Dialog удаляет из массива фото раньше нажатия кнопки.
-
-    2.После сохранения фото надо обновить массив либо заного его создавать.
-
-     */
 
     public static final String LOG_MENU = "menu";
 
@@ -42,7 +36,6 @@ public class GeneralActivity extends AppCompatActivity {
     private PicturesAdapter.OnItemClickListener listener;
     private PicturesAdapter.OnItemLongClickListener listenerLong;
     private List<Image> images;
-    private DeleteDialogFragment deleteDialogFragment;
 
 
     @Override
@@ -74,6 +67,8 @@ public class GeneralActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        images = new ArrayList<>();
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_general);
@@ -96,17 +91,7 @@ public class GeneralActivity extends AppCompatActivity {
         listenerLong = new PicturesAdapter.OnItemLongClickListener() {
             @Override
             public boolean OnItemLongClick(Image item) {
-
-                deleteDialogFragment = new DeleteDialogFragment();
-
-                Bundle args = new Bundle();
-                args.putString("path",item.getPath());
-                deleteDialogFragment.setArguments(args);
-                deleteDialogFragment.show(getFragmentManager(),"custom");
-
-                        images.remove(item);
-                        picturesAdapter.notifyDataSetChanged();
-
+                        showDeleteItemDialog(item.getPath(),item);
                 return true;
             }
         };
@@ -129,9 +114,8 @@ public class GeneralActivity extends AppCompatActivity {
         recyclerView.setAdapter(picturesAdapter);
     }
 
-    private void getAllFiles(){
 
-        images = new ArrayList<>();
+    private void getAllFiles(){
 
         File file = null;
         final int pix = getResources().getDimensionPixelSize(R.dimen.recyclerViewer_size);
@@ -139,57 +123,42 @@ public class GeneralActivity extends AppCompatActivity {
 
         for (int i = 0; i < files.length; i++) {
 
-            Log.d("files", "File:" + files[i].getName());
-
             file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), files[i].getName());
 
             if (!file.isDirectory() && !file.isHidden()) {
-                Bitmap bitmap = decodeSampledBitmapFromResource(file.getAbsolutePath(), pix, pix);
-                images.add(new Image(bitmap,files[i].getAbsolutePath()));
+
+                images.add(new Image(files[i].getAbsolutePath()));
+               Log.d("files", "File:" + files[i].getName() + "Size: " + (new File(files[i].getAbsolutePath()).length()/(1024*1024))+ " Mb " + " Date: " + new Date(files[i].lastModified()).toString());
             }
         }
     }
 
+    public void showDeleteItemDialog(final String path, final Image item) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(R.string.dialog_title);
+        alertDialogBuilder.setMessage(R.string.dialog_message);
+        alertDialogBuilder.setPositiveButton(R.string.dialog_yes,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        File file = new File(path);
+                        file.delete();
+                        images.remove(item);
+                        picturesAdapter.notifyDataSetChanged();
+                    }
+                });
 
-    public static Bitmap decodeSampledBitmapFromResource(String path, int reqWidth, int reqHeight) {
+        alertDialogBuilder.setNegativeButton(R.string.dialog_cancel,
+                new DialogInterface.OnClickListener() {
 
-        final BitmapFactory.Options options = new BitmapFactory.Options();
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        arg0.dismiss();
+                    }
+                });
 
-        options.inJustDecodeBounds = true;
-
-        BitmapFactory.decodeFile(path, options);
-
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        options.inJustDecodeBounds = false;
-
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-
-        return BitmapFactory.decodeFile(path, options);
-    }
-
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
-    private void showDeleteItemDialog(){
-
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
 }

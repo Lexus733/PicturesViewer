@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHolder> {
@@ -46,7 +47,7 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull PicturesAdapter.ViewHolder holder, final int position) {
         final Image image = images.get(position);
-        holder.imageView.setImageBitmap(image.getImage());
+        Picasso.get().load(new File(image.getPath())).placeholder(R.drawable.progress_animation).resize(240,240).error(R.drawable.ic_warning_black_24dp).into(holder.imageView);
         holder.bind(image,listener,listenerLong);
     }
 

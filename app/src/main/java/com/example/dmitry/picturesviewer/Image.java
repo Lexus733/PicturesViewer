@@ -2,8 +2,12 @@ package com.example.dmitry.picturesviewer;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 
-public class Image {
+import java.io.File;
+import java.util.Date;
+
+public class Image{
 
     private Bitmap image;
     private String path;
@@ -18,6 +22,10 @@ public class Image {
 
     public Image(Bitmap image, String path){
         this.image = image;
+        this.path = path;
+    }
+
+    public Image(String path){
         this.path = path;
     }
 

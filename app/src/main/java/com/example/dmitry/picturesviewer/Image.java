@@ -9,6 +9,7 @@ import java.util.Date;
 
 public class Image{
 
+
     private Bitmap image;
     private String path;
 
@@ -18,6 +19,14 @@ public class Image{
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public double getSize(){
+        return (double) (new File(getPath()).length()/(1024*1024));
+    }
+
+    public Date getDate(){
+        return new Date((new File(getPath()).lastModified()));
     }
 
     public Image(Bitmap image, String path){
@@ -36,4 +45,6 @@ public class Image{
     public void setImage(Bitmap image) {
         this.image = image;
     }
+
+
 }

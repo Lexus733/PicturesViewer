@@ -21,6 +21,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +38,8 @@ public class GeneralActivity extends AppCompatActivity {
     private PicturesAdapter.OnItemClickListener listener;
     private PicturesAdapter.OnItemLongClickListener listenerLong;
     private List<Image> images;
+    private boolean sortSize;
+    private boolean sortDate;
 
 
     @Override
@@ -51,12 +55,62 @@ public class GeneralActivity extends AppCompatActivity {
         switch (id){
             case R.id.action_sort_by_date:{
                 Log.d(LOG_MENU,"Sort by date pressed" + id);
-                Toast.makeText(getApplicationContext(),"By date",Toast.LENGTH_SHORT).show();
+                if (sortDate){
+                    item.setIcon(R.drawable.ic_arrow_upward_black_24dp);
+                    Toast.makeText(getApplicationContext(),"Sorted by size: Newer ",Toast.LENGTH_SHORT).show();
+                    // Сюда код
+                    sortDate = !sortDate;
+                    picturesAdapter.notifyDataSetChanged();
+                } else {
+                    item.setIcon(R.drawable.ic_arrow_downward_black_24dp);
+                    Toast.makeText(getApplicationContext(),"Sorted by size: Older ",Toast.LENGTH_SHORT).show();
+                    //Сюда код
+                    sortDate = !sortDate;
+                    picturesAdapter.notifyDataSetChanged();
+                }
                 return true;
             }
             case R.id.action_sort_by_size:{
             Log.d(LOG_MENU,"Sort by size pressed" + id);
-                Toast.makeText(getApplicationContext(),"By size",Toast.LENGTH_SHORT).show();
+                if (sortSize){
+                    Toast.makeText(getApplicationContext(),"Sorted by size: Bigger ",Toast.LENGTH_SHORT).show();
+                    item.setIcon(R.drawable.ic_arrow_downward_black_24dp);
+
+                Collections.sort(images, new Comparator<Image>() {
+                    @Override
+                    public int compare(Image o1, Image o2) {
+                        if (o1.getSize() > o2.getSize()){
+                            return -1;
+                        } else if(o1.getSize() < o2.getSize()){
+                            return 1;
+                        }
+                        return 0;
+                    }
+                });
+
+                picturesAdapter.notifyDataSetChanged();
+
+                sortSize = !sortSize;
+
+                } else {
+                    item.setIcon(R.drawable.ic_arrow_upward_black_24dp);
+                    Toast.makeText(getApplicationContext(),"Sorted by size: Smaller ",Toast.LENGTH_SHORT).show();
+
+                    Collections.sort(images, new Comparator<Image>() {
+                        @Override
+                        public int compare(Image o1, Image o2) {
+                            if (o1.getSize() > o2.getSize()){
+                                return 1;
+                            } else if(o1.getSize() < o2.getSize()){
+                                return -1;
+                            }
+                            return 0;
+                        }
+                    });
+                    picturesAdapter.notifyDataSetChanged();
+
+                    sortSize = true;
+                }
                 return true;
             }
             default:
@@ -92,6 +146,7 @@ public class GeneralActivity extends AppCompatActivity {
             @Override
             public boolean OnItemLongClick(Image item) {
                         showDeleteItemDialog(item.getPath(),item);
+                Toast.makeText(getApplicationContext(),"Date: " + item.getDate(),Toast.LENGTH_SHORT).show();
                 return true;
             }
         };

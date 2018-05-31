@@ -1,13 +1,11 @@
 package com.example.dmitry.picturesviewer;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 
 import java.io.File;
 import java.util.Date;
 
-public class Image{
+public class Image {
 
 
     private Bitmap image;
@@ -21,20 +19,16 @@ public class Image{
         this.path = path;
     }
 
-    public double getSize(){
-        return (double) (new File(getPath()).length()/(1024*1024));
+    public double getSize() {
+        return (double) (new File(getPath()).length() / (1024 * 1024));
     }
 
-    public Date getDate(){
+    public Date getDate() {
         return new Date((new File(getPath()).lastModified()));
     }
 
-    public Image(Bitmap image, String path){
-        this.image = image;
-        this.path = path;
-    }
 
-    public Image(String path){
+    Image(String path) {
         this.path = path;
     }
 

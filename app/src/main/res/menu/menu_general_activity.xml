@@ -4,15 +4,15 @@
 
     <item
         android:id="@+id/action_sort_by_date"
-        android:title="@string/sortByDate"
-        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_date_range_black_24dp"
         android:orderInCategory="1"
-        android:icon="@drawable/ic_date_range_black_24dp"/>
+        android:title="@string/sortByDate"
+        app:showAsAction="ifRoom" />
     <item
-        android:orderInCategory="2"
-        app:showAsAction="ifRoom"
         android:id="@+id/action_sort_by_size"
+        android:icon="@drawable/ic_storage_black_24dp"
+        android:orderInCategory="2"
         android:title="@string/sortBySize"
-        android:icon="@drawable/ic_storage_black_24dp"/>
+        app:showAsAction="ifRoom" />
 
 </menu>

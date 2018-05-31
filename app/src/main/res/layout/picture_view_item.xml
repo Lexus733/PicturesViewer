@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:padding="2dp">
 
     <ImageView
         android:id="@+id/picture_item"
-        android:scaleType="fitXY"
         android:layout_width="@dimen/recyclerViewer_size"
-        android:layout_height="@dimen/recyclerViewer_size"/>
+        android:layout_height="@dimen/recyclerViewer_size" />
 
 </LinearLayout>

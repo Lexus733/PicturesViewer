@@ -17,17 +17,19 @@ import java.util.ArrayList;
 
 public class PicturesView extends AppCompatActivity {
 
-    ImageView imageView;
-    String path;
-    Intent intent;
+   private ImageView imageView;
+   private String path;
+   private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pictures_view);
+
         imageView = (ImageView) findViewById(R.id.picturesView_viewer);
         intent = getIntent();
         path = intent.getStringExtra("path");
+
         Picasso.get().load(new File(path)).error(R.drawable.ic_warning_black_24dp).placeholder(R.drawable.progress_animation).into(imageView);
     }
 }

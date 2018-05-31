@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.List;
 public class GeneralActivity extends AppCompatActivity {
 
     public static final String LOG_MENU = "menu";
+    private static final String LOG_FILES_CHECK = "files";
 
     private Uri imageUri;
     private FloatingActionButton fab;
@@ -56,15 +58,41 @@ public class GeneralActivity extends AppCompatActivity {
             case R.id.action_sort_by_date:{
                 Log.d(LOG_MENU,"Sort by date pressed" + id);
                 if (sortDate){
-                    item.setIcon(R.drawable.ic_arrow_upward_black_24dp);
-                    Toast.makeText(getApplicationContext(),"Sorted by size: Newer ",Toast.LENGTH_SHORT).show();
-                    // Сюда код
+                    item.setIcon(R.drawable.ic_arrow_downward_black_24dp);
+                    Toast.makeText(getApplicationContext(),"Sorted by date: Newer ",Toast.LENGTH_SHORT).show();
+
+                    Collections.sort(images, new Comparator<Image>() {
+                        @Override
+                        public int compare(Image o1, Image o2) {
+                            if (o1.getDate().getTime() > o2.getDate().getTime()){
+                                return -1;
+                            } else if(o1.getDate().getTime() < o2.getDate().getTime()){
+                                return 1;
+                            }
+                            return 0;
+                        }
+                    });
+
                     sortDate = !sortDate;
                     picturesAdapter.notifyDataSetChanged();
+
                 } else {
-                    item.setIcon(R.drawable.ic_arrow_downward_black_24dp);
-                    Toast.makeText(getApplicationContext(),"Sorted by size: Older ",Toast.LENGTH_SHORT).show();
-                    //Сюда код
+
+                    item.setIcon(R.drawable.ic_arrow_upward_black_24dp);
+                    Toast.makeText(getApplicationContext(),"Sorted by date: Older ",Toast.LENGTH_SHORT).show();
+
+                    Collections.sort(images, new Comparator<Image>() {
+                        @Override
+                        public int compare(Image o1, Image o2) {
+                            if (o1.getDate().getTime() > o2.getDate().getTime()){
+                                return 1;
+                            } else if(o1.getDate().getTime() < o2.getDate().getTime()){
+                                return -1;
+                            }
+                            return 0;
+                        }
+                    });
+
                     sortDate = !sortDate;
                     picturesAdapter.notifyDataSetChanged();
                 }
@@ -72,6 +100,7 @@ public class GeneralActivity extends AppCompatActivity {
             }
             case R.id.action_sort_by_size:{
             Log.d(LOG_MENU,"Sort by size pressed" + id);
+
                 if (sortSize){
                     Toast.makeText(getApplicationContext(),"Sorted by size: Bigger ",Toast.LENGTH_SHORT).show();
                     item.setIcon(R.drawable.ic_arrow_downward_black_24dp);
@@ -146,7 +175,6 @@ public class GeneralActivity extends AppCompatActivity {
             @Override
             public boolean OnItemLongClick(Image item) {
                         showDeleteItemDialog(item.getPath(),item);
-                Toast.makeText(getApplicationContext(),"Date: " + item.getDate(),Toast.LENGTH_SHORT).show();
                 return true;
             }
         };
@@ -173,7 +201,6 @@ public class GeneralActivity extends AppCompatActivity {
     private void getAllFiles(){
 
         File file = null;
-        final int pix = getResources().getDimensionPixelSize(R.dimen.recyclerViewer_size);
         final File[] files = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString()).listFiles();
 
         for (int i = 0; i < files.length; i++) {
@@ -183,15 +210,18 @@ public class GeneralActivity extends AppCompatActivity {
             if (!file.isDirectory() && !file.isHidden()) {
 
                 images.add(new Image(files[i].getAbsolutePath()));
-               Log.d("files", "File:" + files[i].getName() + "Size: " + (new File(files[i].getAbsolutePath()).length()/(1024*1024))+ " Mb " + " Date: " + new Date(files[i].lastModified()).toString());
+
+               Log.d(LOG_FILES_CHECK, "File:" + files[i].getName() + "Size: " + (new File(files[i].getAbsolutePath()).length()/(1024*1024))+ " Mb " + " Date: " + new Date(files[i].lastModified()).toString());
             }
         }
     }
 
-    public void showDeleteItemDialog(final String path, final Image item) {
+    private void showDeleteItemDialog(final String path, final Image item) {
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(R.string.dialog_title);
         alertDialogBuilder.setMessage(R.string.dialog_message);
+        alertDialogBuilder.setIcon(R.drawable.ic_warning_black_24dp);
         alertDialogBuilder.setPositiveButton(R.string.dialog_yes,
                 new DialogInterface.OnClickListener() {
                     @Override

@@ -65,7 +65,7 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHo
             imageView = (ImageView) v.findViewById(R.id.picture_item);
         }
 
-        public void bind(final Image image,final OnItemClickListener listener, final OnItemLongClickListener listenerLong){
+        private void bind(final Image image,final OnItemClickListener listener, final OnItemLongClickListener listenerLong){
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

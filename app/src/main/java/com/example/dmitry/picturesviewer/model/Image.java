@@ -1,4 +1,4 @@
-package com.example.dmitry.picturesviewer;
+package com.example.dmitry.picturesviewer.model;
 
 import android.graphics.Bitmap;
 
@@ -28,7 +28,7 @@ public class Image {
     }
 
 
-    Image(String path) {
+    public Image(String path) {
         this.path = path;
     }
 

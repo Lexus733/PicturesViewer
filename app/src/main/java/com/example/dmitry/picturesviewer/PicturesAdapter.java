@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.dmitry.picturesviewer.model.Image;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHo
     private OnItemLongClickListener listenerLong;
 
 
-    PicturesAdapter(Context context, List<Image> images, OnItemClickListener listener, OnItemLongClickListener listenerLong) {
+    public PicturesAdapter(Context context, List<Image> images, OnItemClickListener listener, OnItemLongClickListener listenerLong) {
         this.images = images;
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;

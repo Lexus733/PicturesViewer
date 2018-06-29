@@ -1,13 +1,13 @@
-package com.example.dmitry.picturesviewer.generalscreen;
+package com.example.dmitry.picturesviewer.presentation.generalscreen;
 
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.dmitry.picturesviewer.model.Image;
+import com.example.dmitry.picturesviewer.domain.Image;
 
 import java.util.List;
 
-public interface GeneralScreen {
+public interface IGeneralScreen {
 
     interface View {
         void initView();
@@ -37,14 +37,5 @@ public interface GeneralScreen {
         void onDestroy();
 
         void onFinished();
-    }
-
-    interface Repositories {
-        Intent createPhoto();
-
-        void deleteFile(String path);
-
-        List<Image> getData();
-
     }
 }

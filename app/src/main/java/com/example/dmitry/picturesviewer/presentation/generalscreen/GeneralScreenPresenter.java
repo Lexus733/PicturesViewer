@@ -1,27 +1,28 @@
-package com.example.dmitry.picturesviewer.generalscreen;
+package com.example.dmitry.picturesviewer.presentation.generalscreen;
 
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.dmitry.picturesviewer.model.Image;
-import com.example.dmitry.picturesviewer.pictureviewer.PicturesView;
+import com.example.dmitry.picturesviewer.data.ReposInternal;
+import com.example.dmitry.picturesviewer.domain.Image;
+import com.example.dmitry.picturesviewer.presentation.picturesview.PicturesView;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class GeneralScreenPresenter implements GeneralScreen.Presenter {
+public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
 
-    private GeneralScreen.View view;
-    private GeneralScreenRepositories repo;
+    private IGeneralScreen.View view;
+    private ReposInternal repo;
 
     private boolean sortBySize;
     private boolean sortByDate;
 
-    public GeneralScreenPresenter(GeneralScreen.View view) {
+    public GeneralScreenPresenter(IGeneralScreen.View view) {
 
         this.view = view;
-        this.repo = new GeneralScreenRepositories();
+        this.repo = new ReposInternal();
     }
 
     @Override

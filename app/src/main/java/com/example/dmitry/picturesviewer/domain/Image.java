@@ -1,4 +1,4 @@
-package com.example.dmitry.picturesviewer.model;
+package com.example.dmitry.picturesviewer.domain;
 
 import android.graphics.Bitmap;
 

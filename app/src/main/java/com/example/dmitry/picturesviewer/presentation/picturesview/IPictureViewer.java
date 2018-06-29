@@ -1,8 +1,8 @@
-package com.example.dmitry.picturesviewer.pictureviewer;
+package com.example.dmitry.picturesviewer.presentation.picturesview;
 
 import android.widget.ImageView;
 
-public interface PictureViewer {
+public interface IPictureViewer {
 
     interface View {
         void initView();
@@ -18,9 +18,5 @@ public interface PictureViewer {
         void onDestroy();
 
         void onFinished();
-    }
-
-    interface Repositories {
-
     }
 }

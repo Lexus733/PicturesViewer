@@ -1,21 +1,22 @@
-package com.example.dmitry.picturesviewer.pictureviewer;
+package com.example.dmitry.picturesviewer.presentation.picturesview;
 
 import android.widget.ImageView;
 
 import com.example.dmitry.picturesviewer.R;
+import com.example.dmitry.picturesviewer.data.ReposInternal;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
-public class PictureViewPresenter implements PictureViewer.Presenter {
+public class PictureViewPresenter implements IPictureViewer.Presenter {
 
-    private PictureViewer.View view;
-    private PictureViewRepositories repo;
+    private IPictureViewer.View view;
+    private ReposInternal repo;
 
 
-    public PictureViewPresenter(PictureViewer.View view) {
+    public PictureViewPresenter(IPictureViewer.View view) {
         this.view = view;
-        repo = new PictureViewRepositories();
+        repo = new ReposInternal();
     }
 
     @Override
@@ -35,6 +36,6 @@ public class PictureViewPresenter implements PictureViewer.Presenter {
 
     @Override
     public void onFinished() {
-
     }
+
 }

@@ -1,18 +1,17 @@
-package com.example.dmitry.picturesviewer.generalscreen;
+package com.example.dmitry.picturesviewer.data;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
-import com.example.dmitry.picturesviewer.model.Image;
+import com.example.dmitry.picturesviewer.domain.Image;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class GeneralScreenRepositories implements GeneralScreen.Repositories {
+public class ReposInternal implements RepoInternalInterface {
 
     private List<Image> images = new ArrayList<>();
 
@@ -29,7 +28,6 @@ public class GeneralScreenRepositories implements GeneralScreen.Repositories {
         File file = new File(path);
         file.delete();
     }
-
 
     @Override
     public List<Image> getData() {

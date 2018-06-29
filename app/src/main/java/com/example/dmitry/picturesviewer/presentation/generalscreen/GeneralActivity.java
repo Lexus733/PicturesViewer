@@ -1,4 +1,4 @@
-package com.example.dmitry.picturesviewer.generalscreen;
+package com.example.dmitry.picturesviewer.presentation.generalscreen;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -13,13 +13,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.dmitry.picturesviewer.model.Image;
-import com.example.dmitry.picturesviewer.PicturesAdapter;
 import com.example.dmitry.picturesviewer.R;
+import com.example.dmitry.picturesviewer.domain.Image;
 
 import java.util.List;
 
-public class GeneralActivity extends AppCompatActivity implements GeneralScreen.View {
+public class GeneralActivity extends AppCompatActivity implements IGeneralScreen.View {
 
     private GeneralScreenPresenter presenter;
 

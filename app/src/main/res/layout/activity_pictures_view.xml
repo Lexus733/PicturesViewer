@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".pictureviewer.PicturesView">
+    tools:context=".presentation.picturesview.PicturesView">
 
     <ImageView
         android:id="@+id/picturesView_viewer"

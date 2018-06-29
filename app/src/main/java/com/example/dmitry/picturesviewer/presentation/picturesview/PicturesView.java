@@ -1,4 +1,4 @@
-package com.example.dmitry.picturesviewer.pictureviewer;
+package com.example.dmitry.picturesviewer.presentation.picturesview;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,10 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
 import com.example.dmitry.picturesviewer.R;
-import com.example.dmitry.picturesviewer.pictureviewer.PictureViewPresenter;
-import com.example.dmitry.picturesviewer.pictureviewer.PictureViewer;
 
-public class PicturesView extends AppCompatActivity implements PictureViewer.View {
+public class PicturesView extends AppCompatActivity implements IPictureViewer.View {
 
     private PictureViewPresenter presenter;
 
@@ -19,6 +17,7 @@ public class PicturesView extends AppCompatActivity implements PictureViewer.Vie
         setContentView(R.layout.activity_pictures_view);
 
         presenter = new PictureViewPresenter(this);
+
         initView();
     }
 
@@ -27,9 +26,8 @@ public class PicturesView extends AppCompatActivity implements PictureViewer.Vie
         final ImageView imageView = findViewById(R.id.picturesView_viewer);
 
         final Intent intent = getIntent();
-        final String path = intent.getStringExtra("path");
 
-        presenter.setImage(path, imageView);
+        presenter.setImage(intent.getStringExtra("path"), imageView);
     }
 
     @Override

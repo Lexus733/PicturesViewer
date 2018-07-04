@@ -13,8 +13,6 @@ import java.util.List;
 
 public class ReposInternal implements RepoInternalInterface {
 
-    private List<Image> images = new ArrayList<>();
-
     @Override
     public Intent createPhoto() {
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -26,11 +24,14 @@ public class ReposInternal implements RepoInternalInterface {
     @Override
     public void deleteFile(String path) {
         File file = new File(path);
+        //noinspection ResultOfMethodCallIgnored
         file.delete();
     }
 
     @Override
     public List<Image> getData() {
+
+        List<Image> images = new ArrayList<>();
 
         final File[] files = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString()).listFiles();
 

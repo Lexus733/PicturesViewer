@@ -2,6 +2,7 @@ package com.example.dmitry.picturesviewer.presentation.generalscreen;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 
 import com.example.dmitry.picturesviewer.data.ReposInternal;
 import com.example.dmitry.picturesviewer.domain.Image;
@@ -19,14 +20,14 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
     private boolean sortBySize;
     private boolean sortByDate;
 
-    public GeneralScreenPresenter(IGeneralScreen.View view) {
+    GeneralScreenPresenter(IGeneralScreen.View view) {
 
         this.view = view;
         this.repo = new ReposInternal();
     }
 
     @Override
-    public void menuSortBySize(List<Image> images) {
+    public void menuSortBySize(List<Image> images, PicturesAdapter picturesAdapter) {
 
         if (sortBySize) {
             view.showMessage("Sorted by size: Bigger ");
@@ -44,6 +45,7 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
             });
 
             sortBySize = !sortBySize;
+            picturesAdapter.notifyDataSetChanged();
 
         } else {
 
@@ -62,12 +64,13 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
             });
 
             sortBySize = !sortBySize;
+            picturesAdapter.notifyDataSetChanged();
         }
 
     }
 
     @Override
-    public void menuSortByDate(List<Image> images) {
+    public void menuSortByDate(List<Image> images, PicturesAdapter picturesAdapter) {
 
         if (sortByDate) {
 
@@ -86,6 +89,7 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
             });
 
             sortByDate = !sortByDate;
+            picturesAdapter.notifyDataSetChanged();
 
         } else {
 
@@ -104,6 +108,7 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
             });
 
             sortByDate = !sortByDate;
+            picturesAdapter.notifyDataSetChanged();
         }
     }
 
@@ -115,9 +120,15 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
     }
 
     @Override
-    public void deleteItem(String path, Image item, List<Image> images) {
+    public void deleteItem(String path, Image item, List<Image> images, PicturesAdapter picturesAdapter) {
         images.remove(item);
         repo.deleteFile(path);
+        picturesAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLongCLick(AlertDialog.Builder showingDialog) {
+        showingDialog.show();
     }
 
     @Override
@@ -134,10 +145,5 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
     @Override
     public void onDestroy() {
         view = null;
-    }
-
-    @Override
-    public void onFinished() {
-
     }
 }

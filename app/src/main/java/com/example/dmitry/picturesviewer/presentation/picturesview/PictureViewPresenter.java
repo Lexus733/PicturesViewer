@@ -3,7 +3,6 @@ package com.example.dmitry.picturesviewer.presentation.picturesview;
 import android.widget.ImageView;
 
 import com.example.dmitry.picturesviewer.R;
-import com.example.dmitry.picturesviewer.data.ReposInternal;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -11,12 +10,10 @@ import java.io.File;
 public class PictureViewPresenter implements IPictureViewer.Presenter {
 
     private IPictureViewer.View view;
-    private ReposInternal repo;
 
 
-    public PictureViewPresenter(IPictureViewer.View view) {
+    PictureViewPresenter(IPictureViewer.View view) {
         this.view = view;
-        repo = new ReposInternal();
     }
 
     @Override
@@ -32,10 +29,6 @@ public class PictureViewPresenter implements IPictureViewer.Presenter {
     @Override
     public void onDestroy() {
         view = null;
-    }
-
-    @Override
-    public void onFinished() {
     }
 
 }

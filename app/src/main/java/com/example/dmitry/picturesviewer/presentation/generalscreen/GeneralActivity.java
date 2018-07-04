@@ -38,13 +38,11 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
         int id = item.getItemId();
         switch (id) {
             case R.id.action_sort_by_date: {
-                presenter.menuSortByDate(images);
-                picturesAdapter.notifyDataSetChanged();
+                presenter.menuSortByDate(images, picturesAdapter);
                 return true;
             }
             case R.id.action_sort_by_size: {
-                presenter.menuSortBySize(images);
-                picturesAdapter.notifyDataSetChanged();
+                presenter.menuSortBySize(images, picturesAdapter);
                 return true;
             }
             default:
@@ -67,6 +65,7 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
 
     @Override
     public void initView() {
+
         images = presenter.getAllFiles();
 
         final RecyclerView recyclerView = findViewById(R.id.recyclerListView);
@@ -82,7 +81,7 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
         final PicturesAdapter.OnItemLongClickListener longClickListener = new PicturesAdapter.OnItemLongClickListener() {
             @Override
             public boolean OnItemLongClick(Image item) {
-                showDeleteDialog(item.getPath(), item);
+                presenter.onLongCLick(createDeleteDialog(item.getPath(), item));
                 return true;
             }
         };
@@ -101,22 +100,13 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
     }
 
     @Override
-    public void showProgress() {
-
-    }
-
-    @Override
-    public void hideProgress() {
-
-    }
-
-    @Override
     public void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showDeleteDialog(final String path, final Image item) {
+    public AlertDialog.Builder createDeleteDialog(final String path, final Image item) {
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(R.string.dialog_title);
         alertDialogBuilder.setMessage(R.string.dialog_message);
@@ -125,20 +115,23 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        presenter.deleteItem(path, item, images);
-                        picturesAdapter.notifyDataSetChanged();
+                        presenter.deleteItem(path, item, images, picturesAdapter);
                     }
                 }).setNegativeButton(R.string.dialog_cancel,
                 new DialogInterface.OnClickListener() {
-
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
                         arg0.dismiss();
                     }
                 });
 
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        return alertDialogBuilder;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initView();
     }
 
     @Override

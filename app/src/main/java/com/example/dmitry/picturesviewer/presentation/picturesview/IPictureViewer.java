@@ -16,7 +16,5 @@ public interface IPictureViewer {
         void setImage(String path, ImageView imageView);
 
         void onDestroy();
-
-        void onFinished();
     }
 }

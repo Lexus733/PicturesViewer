@@ -6,8 +6,6 @@ import java.io.File;
 import java.util.Date;
 
 public class Image {
-
-
     private Bitmap image;
     private String path;
 
@@ -26,7 +24,6 @@ public class Image {
     public Date getDate() {
         return new Date((new File(getPath()).lastModified()));
     }
-
 
     public Image(String path) {
         this.path = path;

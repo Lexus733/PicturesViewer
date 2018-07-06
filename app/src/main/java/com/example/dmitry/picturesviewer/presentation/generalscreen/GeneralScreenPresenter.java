@@ -15,6 +15,8 @@ import java.util.List;
 public class GeneralScreenPresenter {
     private IGeneralScreen.View view;
     private ReposInternal repo;
+    private PicturesAdapter picturesAdapter;
+    private List<Image> images;
 
     private boolean sortBySize;
     private boolean sortByDate;
@@ -22,11 +24,11 @@ public class GeneralScreenPresenter {
     GeneralScreenPresenter(IGeneralScreen.View view) {
         this.view = view;
         this.repo = new ReposInternal();
-
+        this.images = repo.getData();
+        this.picturesAdapter = new PicturesAdapter(images, getOnItemListener(), getLongListener());
     }
 
-    public void menuSortBySize(List<Image> images) {
-
+    public void menuSortBySize() {
         if (sortBySize) {
             view.showMessage("Sorted by size: Bigger ");
 
@@ -43,10 +45,8 @@ public class GeneralScreenPresenter {
             });
 
             sortBySize = !sortBySize;
-            view.refreshAdapter();
-
+            picturesAdapter.notifyDataSetChanged();
         } else {
-
             view.showMessage("Sorted by size: Smaller ");
 
             Collections.sort(images, new Comparator<Image>() {
@@ -62,13 +62,11 @@ public class GeneralScreenPresenter {
             });
 
             sortBySize = !sortBySize;
-            view.refreshAdapter();
+            picturesAdapter.notifyDataSetChanged();
         }
-
     }
 
-    public void menuSortByDate(List<Image> images) {
-
+    public void menuSortByDate() {
         if (sortByDate) {
 
             view.showMessage("Sorted by date: Newer ");
@@ -86,10 +84,8 @@ public class GeneralScreenPresenter {
             });
 
             sortByDate = !sortByDate;
-            view.refreshAdapter();
-
+            picturesAdapter.notifyDataSetChanged();
         } else {
-
             view.showMessage("Sorted by date: Older ");
 
             Collections.sort(images, new Comparator<Image>() {
@@ -105,11 +101,11 @@ public class GeneralScreenPresenter {
             });
 
             sortByDate = !sortByDate;
-            view.refreshAdapter();
+            picturesAdapter.notifyDataSetChanged();
         }
     }
 
-    public PicturesAdapter.OnItemClickListener getOnItemListener() {
+    private PicturesAdapter.OnItemClickListener getOnItemListener() {
         return new PicturesAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(Image item) {
@@ -121,7 +117,7 @@ public class GeneralScreenPresenter {
         };
     }
 
-    public PicturesAdapter.OnItemLongClickListener getLongListener() {
+    private PicturesAdapter.OnItemLongClickListener getLongListener() {
         return new PicturesAdapter.OnItemLongClickListener() {
             @Override
             public boolean OnItemLongClick(Image item) {
@@ -132,7 +128,6 @@ public class GeneralScreenPresenter {
     }
 
     private View.OnClickListener createPhotoListener() {
-
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,17 +141,16 @@ public class GeneralScreenPresenter {
     }
 
     public void deleteItem(Image item) {
-        view.getListImage().remove(item);
+        images.remove(item);
         repo.deleteFile(item.getPath());
-        view.refreshAdapter();
-    }
-
-    public List<Image> getAllFiles() {
-        return repo.getData();
+        picturesAdapter.notifyDataSetChanged();
     }
 
     public void onDestroy() {
         view = null;
     }
 
+    public PicturesAdapter getPicturesAdapter() {
+        return picturesAdapter;
+    }
 }

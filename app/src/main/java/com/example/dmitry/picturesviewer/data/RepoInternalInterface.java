@@ -7,7 +7,6 @@ import com.example.dmitry.picturesviewer.domain.Image;
 import java.util.List;
 
 public interface RepoInternalInterface {
-
     Intent createPhoto();
 
     void deleteFile(String path);

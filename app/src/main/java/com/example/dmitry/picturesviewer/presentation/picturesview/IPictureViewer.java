@@ -4,5 +4,4 @@ public interface IPictureViewer {
     interface View {
         void showPicture(String path);
     }
-
 }

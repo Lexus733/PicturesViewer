@@ -10,18 +10,14 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 
 public class PicturesViewActivity extends AppCompatActivity implements IPictureViewer.View {
-    private PictureViewPresenter presenter;
     private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pictures_view);
-
         imageView = findViewById(R.id.picturesView_viewer);
-
-        presenter = new PictureViewPresenter(this, getIntent());
-
+        PictureViewPresenter presenter = new PictureViewPresenter(this, getIntent());
     }
 
     @Override

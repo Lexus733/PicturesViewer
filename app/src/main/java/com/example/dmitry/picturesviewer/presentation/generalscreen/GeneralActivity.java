@@ -17,19 +17,27 @@ import android.widget.Toast;
 import com.example.dmitry.picturesviewer.R;
 import com.example.dmitry.picturesviewer.domain.Image;
 
-import java.util.List;
-
 public class GeneralActivity extends AppCompatActivity implements IGeneralScreen.View {
-
-    private List<Image> images;
     private RecyclerView recyclerView;
     private GeneralScreenPresenter presenter;
-    private PicturesAdapter picturesAdapter;
     private AlertDialog deleteDialog;
     private FloatingActionButton fab;
-    private GridLayoutManager gridLayoutManager;
     private Context context;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getApplicationContext();
+        setContentView(R.layout.activity_general);
+
+        recyclerView = findViewById(R.id.recyclerListView);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        presenter = new GeneralScreenPresenter(this);
+        recyclerView.setAdapter(presenter.getPicturesAdapter());
+
+        fab = findViewById(R.id.fabBtn_camera);
+        presenter.setPhotoListener();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -43,40 +51,16 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
         int id = item.getItemId();
         switch (id) {
             case R.id.action_sort_by_date: {
-                presenter.menuSortByDate(images);
+                presenter.menuSortByDate();
                 return true;
             }
             case R.id.action_sort_by_size: {
-                presenter.menuSortBySize(images);
+                presenter.menuSortBySize();
                 return true;
             }
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        context = getApplicationContext();
-
-        setContentView(R.layout.activity_general);
-
-        recyclerView = findViewById(R.id.recyclerListView);
-
-        fab = findViewById(R.id.fabBtn_camera);
-
-        gridLayoutManager = new GridLayoutManager(this, 3);
-        recyclerView.setLayoutManager(gridLayoutManager);
-
-        presenter = new GeneralScreenPresenter(this);
-
-        images = presenter.getAllFiles();
-
-        picturesAdapter = new PicturesAdapter(images, presenter.getOnItemListener(), presenter.getLongListener());
-        recyclerView.setAdapter(picturesAdapter);
-        presenter.setPhotoListener();
     }
 
     @Override
@@ -120,9 +104,7 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
     protected void onResume() {
         super.onResume();
         presenter = new GeneralScreenPresenter(this);
-        images = presenter.getAllFiles();
-        picturesAdapter = new PicturesAdapter(images, presenter.getOnItemListener(), presenter.getLongListener());
-        recyclerView.setAdapter(picturesAdapter);
+        recyclerView.setAdapter(presenter.getPicturesAdapter());
     }
 
     @Override
@@ -141,15 +123,4 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
     public void setOnClickCreatePhoto(View.OnClickListener clickCreatePhoto) {
         fab.setOnClickListener(clickCreatePhoto);
     }
-
-    @Override
-    public List<Image> getListImage() {
-        return images;
-    }
-
-    @Override
-    public void refreshAdapter() {
-        picturesAdapter.notifyDataSetChanged();
-    }
-
 }

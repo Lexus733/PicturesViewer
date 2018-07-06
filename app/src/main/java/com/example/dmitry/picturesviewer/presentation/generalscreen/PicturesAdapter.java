@@ -15,7 +15,6 @@ import java.io.File;
 import java.util.List;
 
 public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHolder> {
-
     public interface OnItemLongClickListener {
         boolean OnItemLongClick(Image item);
     }
@@ -45,7 +44,13 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull PicturesAdapter.ViewHolder holder, final int position) {
         final Image image = images.get(position);
-        Picasso.get().load(new File(image.getPath())).placeholder(R.drawable.progress_animation).centerCrop().resize(240, 240).error(R.drawable.ic_warning_black_24dp).into(holder.imageView);
+        Picasso.get()
+                .load(new File(image.getPath()))
+                .placeholder(R.drawable.progress_animation)
+                .centerCrop()
+                .resize(240, 240)
+                .error(R.drawable.ic_warning_black_24dp)
+                .into(holder.imageView);
         holder.bind(image, listener, listenerLong);
     }
 
@@ -55,7 +60,6 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHo
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-
         final ImageView imageView;
 
         ViewHolder(View v) {

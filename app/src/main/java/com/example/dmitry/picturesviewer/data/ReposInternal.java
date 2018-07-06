@@ -18,6 +18,7 @@ public class ReposInternal implements RepoInternalInterface {
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         Uri imageUri = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "pv_" + String.valueOf(System.currentTimeMillis()) + ".jpg"));
         i.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return i;
     }
 

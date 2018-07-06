@@ -23,7 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.picturesview.PicturesView"></activity>
+        <activity android:name=".presentation.picturesview.PicturesViewActivity"></activity>
     </application>
 
 </manifest>

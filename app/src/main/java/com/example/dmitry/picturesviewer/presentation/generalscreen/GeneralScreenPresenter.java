@@ -1,19 +1,18 @@
 package com.example.dmitry.picturesviewer.presentation.generalscreen;
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
+import android.view.View;
 
 import com.example.dmitry.picturesviewer.data.ReposInternal;
 import com.example.dmitry.picturesviewer.domain.Image;
-import com.example.dmitry.picturesviewer.presentation.picturesview.PicturesView;
+import com.example.dmitry.picturesviewer.other.IntentKeys;
+import com.example.dmitry.picturesviewer.presentation.picturesview.PicturesViewActivity;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
-
+public class GeneralScreenPresenter {
     private IGeneralScreen.View view;
     private ReposInternal repo;
 
@@ -21,13 +20,12 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
     private boolean sortByDate;
 
     GeneralScreenPresenter(IGeneralScreen.View view) {
-
         this.view = view;
         this.repo = new ReposInternal();
+
     }
 
-    @Override
-    public void menuSortBySize(List<Image> images, PicturesAdapter picturesAdapter) {
+    public void menuSortBySize(List<Image> images) {
 
         if (sortBySize) {
             view.showMessage("Sorted by size: Bigger ");
@@ -45,7 +43,7 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
             });
 
             sortBySize = !sortBySize;
-            picturesAdapter.notifyDataSetChanged();
+            view.refreshAdapter();
 
         } else {
 
@@ -64,13 +62,12 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
             });
 
             sortBySize = !sortBySize;
-            picturesAdapter.notifyDataSetChanged();
+            view.refreshAdapter();
         }
 
     }
 
-    @Override
-    public void menuSortByDate(List<Image> images, PicturesAdapter picturesAdapter) {
+    public void menuSortByDate(List<Image> images) {
 
         if (sortByDate) {
 
@@ -89,7 +86,7 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
             });
 
             sortByDate = !sortByDate;
-            picturesAdapter.notifyDataSetChanged();
+            view.refreshAdapter();
 
         } else {
 
@@ -108,42 +105,58 @@ public class GeneralScreenPresenter implements IGeneralScreen.Presenter {
             });
 
             sortByDate = !sortByDate;
-            picturesAdapter.notifyDataSetChanged();
+            view.refreshAdapter();
         }
     }
 
-    @Override
-    public Intent onItemClick(Image item, Context context) {
-        Intent i = new Intent(context, PicturesView.class);
-        i.putExtra("path", item.getPath());
-        return i;
+    public PicturesAdapter.OnItemClickListener getOnItemListener() {
+        return new PicturesAdapter.OnItemClickListener() {
+            @Override
+            public void OnItemClick(Image item) {
+                Intent i = new Intent(view.getContext(), PicturesViewActivity.class);
+                i.putExtra(IntentKeys.PATH_TO_PHOTO, item.getPath());
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                view.getContext().startActivity(i);
+            }
+        };
     }
 
-    @Override
-    public void deleteItem(String path, Image item, List<Image> images, PicturesAdapter picturesAdapter) {
-        images.remove(item);
-        repo.deleteFile(path);
-        picturesAdapter.notifyDataSetChanged();
+    public PicturesAdapter.OnItemLongClickListener getLongListener() {
+        return new PicturesAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean OnItemLongClick(Image item) {
+                view.showDialog(item);
+                return true;
+            }
+        };
     }
 
-    @Override
-    public void onLongCLick(AlertDialog.Builder showingDialog) {
-        showingDialog.show();
+    private View.OnClickListener createPhotoListener() {
+
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.getContext().startActivity(repo.createPhoto());
+            }
+        };
     }
 
-    @Override
-    public Intent onFabButtonClick() {
-        return repo.createPhoto();
+    public void setPhotoListener() {
+        view.setOnClickCreatePhoto(createPhotoListener());
     }
 
+    public void deleteItem(Image item) {
+        view.getListImage().remove(item);
+        repo.deleteFile(item.getPath());
+        view.refreshAdapter();
+    }
 
-    @Override
     public List<Image> getAllFiles() {
         return repo.getData();
     }
 
-    @Override
     public void onDestroy() {
         view = null;
     }
+
 }

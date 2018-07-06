@@ -1,6 +1,5 @@
 package com.example.dmitry.picturesviewer.presentation.generalscreen;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,26 +24,22 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHo
         void OnItemClick(Image item);
     }
 
-
-    private LayoutInflater inflater;
     private List<Image> images;
     private OnItemClickListener listener;
     private OnItemLongClickListener listenerLong;
 
 
-    PicturesAdapter(Context context, List<Image> images, OnItemClickListener listener, OnItemLongClickListener listenerLong) {
+    PicturesAdapter(List<Image> images, OnItemClickListener listener, OnItemLongClickListener listenerLong) {
         this.images = images;
-        this.inflater = LayoutInflater.from(context);
         this.listener = listener;
         this.listenerLong = listenerLong;
-
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
-        final View view = inflater.inflate(R.layout.picture_view_item, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.picture_view_item, parent, false));
     }
 
     @Override

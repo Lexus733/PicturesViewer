@@ -1,5 +1,6 @@
 package com.example.dmitry.picturesviewer.presentation.generalscreen;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -20,10 +21,14 @@ import java.util.List;
 
 public class GeneralActivity extends AppCompatActivity implements IGeneralScreen.View {
 
-    private GeneralScreenPresenter presenter;
-
-    private PicturesAdapter picturesAdapter;
     private List<Image> images;
+    private RecyclerView recyclerView;
+    private GeneralScreenPresenter presenter;
+    private PicturesAdapter picturesAdapter;
+    private AlertDialog deleteDialog;
+    private FloatingActionButton fab;
+    private GridLayoutManager gridLayoutManager;
+    private Context context;
 
 
     @Override
@@ -38,11 +43,11 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
         int id = item.getItemId();
         switch (id) {
             case R.id.action_sort_by_date: {
-                presenter.menuSortByDate(images, picturesAdapter);
+                presenter.menuSortByDate(images);
                 return true;
             }
             case R.id.action_sort_by_size: {
-                presenter.menuSortBySize(images, picturesAdapter);
+                presenter.menuSortBySize(images);
                 return true;
             }
             default:
@@ -52,51 +57,26 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        presenter = new GeneralScreenPresenter(this);
-
         super.onCreate(savedInstanceState);
+
+        context = getApplicationContext();
 
         setContentView(R.layout.activity_general);
 
-        initView();
+        recyclerView = findViewById(R.id.recyclerListView);
 
-    }
+        fab = findViewById(R.id.fabBtn_camera);
 
-    @Override
-    public void initView() {
+        gridLayoutManager = new GridLayoutManager(this, 3);
+        recyclerView.setLayoutManager(gridLayoutManager);
+
+        presenter = new GeneralScreenPresenter(this);
 
         images = presenter.getAllFiles();
 
-        final RecyclerView recyclerView = findViewById(R.id.recyclerListView);
-        final FloatingActionButton fab = findViewById(R.id.fabBtn_camera);
-
-        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
-        final PicturesAdapter.OnItemClickListener listener = new PicturesAdapter.OnItemClickListener() {
-            @Override
-            public void OnItemClick(Image item) {
-                startActivity(presenter.onItemClick(item, getApplicationContext()));
-            }
-        };
-        final PicturesAdapter.OnItemLongClickListener longClickListener = new PicturesAdapter.OnItemLongClickListener() {
-            @Override
-            public boolean OnItemLongClick(Image item) {
-                presenter.onLongCLick(createDeleteDialog(item.getPath(), item));
-                return true;
-            }
-        };
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(presenter.onFabButtonClick());
-            }
-        });
-
-        picturesAdapter = new PicturesAdapter(this, images, listener, longClickListener);
-
-        recyclerView.setLayoutManager(gridLayoutManager);
+        picturesAdapter = new PicturesAdapter(images, presenter.getOnItemListener(), presenter.getLongListener());
         recyclerView.setAdapter(picturesAdapter);
+        presenter.setPhotoListener();
     }
 
     @Override
@@ -105,8 +85,17 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
     }
 
     @Override
-    public AlertDialog.Builder createDeleteDialog(final String path, final Image item) {
+    public void showDialog(Image image) {
+        if (deleteDialog != null) {
+            deleteDialog.dismiss();
+            deleteDialog = null;
+        } else {
+            deleteDialog = createDeleteDialog(image);
+            deleteDialog.show();
+        }
+    }
 
+    private AlertDialog createDeleteDialog(final Image item) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(R.string.dialog_title);
         alertDialogBuilder.setMessage(R.string.dialog_message);
@@ -115,7 +104,7 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        presenter.deleteItem(path, item, images, picturesAdapter);
+                        presenter.deleteItem(item);
                     }
                 }).setNegativeButton(R.string.dialog_cancel,
                 new DialogInterface.OnClickListener() {
@@ -124,14 +113,16 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
                         arg0.dismiss();
                     }
                 });
-
-        return alertDialogBuilder;
+        return alertDialogBuilder.create();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        initView();
+        presenter = new GeneralScreenPresenter(this);
+        images = presenter.getAllFiles();
+        picturesAdapter = new PicturesAdapter(images, presenter.getOnItemListener(), presenter.getLongListener());
+        recyclerView.setAdapter(picturesAdapter);
     }
 
     @Override
@@ -139,4 +130,26 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
         super.onDestroy();
         presenter.onDestroy();
     }
+
+
+    @Override
+    public Context getContext() {
+        return context;
+    }
+
+    @Override
+    public void setOnClickCreatePhoto(View.OnClickListener clickCreatePhoto) {
+        fab.setOnClickListener(clickCreatePhoto);
+    }
+
+    @Override
+    public List<Image> getListImage() {
+        return images;
+    }
+
+    @Override
+    public void refreshAdapter() {
+        picturesAdapter.notifyDataSetChanged();
+    }
+
 }

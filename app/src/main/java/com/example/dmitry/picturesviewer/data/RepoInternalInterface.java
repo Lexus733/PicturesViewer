@@ -12,5 +12,4 @@ public interface RepoInternalInterface {
     void deleteFile(String path);
 
     List<Image> getData();
-
 }

@@ -1,7 +1,6 @@
 package com.example.dmitry.picturesviewer.presentation.generalscreen;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -64,8 +63,8 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
     }
 
     @Override
-    public void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    public void showMessage(Integer id) {
+        Toast.makeText(this, getResources().getString(id), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -73,6 +72,8 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
         if (deleteDialog != null) {
             deleteDialog.dismiss();
             deleteDialog = null;
+            deleteDialog = createDeleteDialog(image);
+            deleteDialog.show();
         } else {
             deleteDialog = createDeleteDialog(image);
             deleteDialog.show();
@@ -85,19 +86,19 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
         alertDialogBuilder.setMessage(R.string.dialog_message);
         alertDialogBuilder.setIcon(R.drawable.ic_warning_black_24dp);
         alertDialogBuilder.setPositiveButton(R.string.dialog_yes,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        presenter.deleteItem(item);
-                    }
-                }).setNegativeButton(R.string.dialog_cancel,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        arg0.dismiss();
-                    }
-                });
+                (arg0, arg1) -> presenter.deleteItem(item)).setNegativeButton(R.string.dialog_cancel,
+                (arg0, arg1) -> arg0.dismiss());
         return alertDialogBuilder.create();
+    }
+
+    @Override
+    public Context getContext() {
+        return context;
+    }
+
+    @Override
+    public void setOnClickCreatePhoto(View.OnClickListener clickCreatePhoto) {
+        fab.setOnClickListener(clickCreatePhoto);
     }
 
     @Override
@@ -113,14 +114,4 @@ public class GeneralActivity extends AppCompatActivity implements IGeneralScreen
         presenter.onDestroy();
     }
 
-
-    @Override
-    public Context getContext() {
-        return context;
-    }
-
-    @Override
-    public void setOnClickCreatePhoto(View.OnClickListener clickCreatePhoto) {
-        fab.setOnClickListener(clickCreatePhoto);
-    }
 }

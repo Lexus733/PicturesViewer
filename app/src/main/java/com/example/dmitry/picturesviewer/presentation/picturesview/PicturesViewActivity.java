@@ -17,7 +17,7 @@ public class PicturesViewActivity extends AppCompatActivity implements IPictureV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pictures_view);
         imageView = findViewById(R.id.picturesView_viewer);
-        PictureViewPresenter presenter = new PictureViewPresenter(this, getIntent());
+        new PictureViewPresenter(this,getIntent());
     }
 
     @Override
@@ -29,8 +29,4 @@ public class PicturesViewActivity extends AppCompatActivity implements IPictureV
                 .into(imageView);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }

@@ -68,18 +68,8 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.ViewHo
         }
 
         private void bind(final Image image, final OnItemClickListener listener, final OnItemLongClickListener listenerLong) {
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.OnItemClick(image);
-                }
-            });
-            imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return listenerLong.OnItemLongClick(image);
-                }
-            });
+            imageView.setOnClickListener(v -> listener.OnItemClick(image));
+            imageView.setOnLongClickListener(v -> listenerLong.OnItemLongClick(image));
         }
     }
 }

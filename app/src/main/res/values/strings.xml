@@ -6,4 +6,8 @@
     <string name="dialog_message">Do you want delete this photo?</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_cancel">Cancel</string>
+    <string name="sortBySizeBigger">Sorted by size: Bigger</string>
+    <string name="sortBySizeSmaller">Sorted by size: Smaller</string>
+    <string name="sortByDateNewer">Sorted by date: Newer</string>
+    <string name="sortByDateOlder">Sorted by date: Older</string>
 </resources>

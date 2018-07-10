@@ -10,7 +10,7 @@ public interface IGeneralScreen {
 
         void setOnClickCreatePhoto(android.view.View.OnClickListener clickCreatePhoto);
 
-        void showMessage(String message);
+        void showMessage(Integer id);
 
         void showDialog(Image image);
     }
